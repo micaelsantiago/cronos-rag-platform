@@ -9,6 +9,7 @@ python_functions = ["test_*"]
 [tool.coverage.run]
 source = ["app"]
 omit = ["*/tests/*", "*/migrations/*"]
+core = "sysmon"
 
 [tool.coverage.report]
 exclude_lines = [

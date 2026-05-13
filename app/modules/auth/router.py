@@ -65,7 +65,7 @@ async def login(
     return UserResponse.model_validate(user)
 
 
-@router.post("/refresh", response_model=UserResponse)
+@router.post("/refresh")
 async def refresh(
     response: Response,
     refresh_token: str | None = Cookie(default=None),

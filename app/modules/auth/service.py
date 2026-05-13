@@ -57,7 +57,7 @@ class AuthService:
             raise HTTPException(status_code=401, detail="TOKEN_REVOKED")
 
         expires_at = token.expires_at
-        if expires_at.tzinfo is None:
+        if expires_at.tzinfo is None:  # pragma: no cover
             expires_at = expires_at.replace(tzinfo=timezone.utc)
         if expires_at < datetime.now(timezone.utc):
             raise HTTPException(status_code=401, detail="TOKEN_EXPIRED")

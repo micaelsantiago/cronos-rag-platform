@@ -1,7 +1,7 @@
 # 07_BACKLOG.md: Cronos RAG Platform
 
-**Status:** Em Definição
-**Versão:** 0.1
+**Status:** Em Andamento
+**Versão:** 0.2
 **Última atualização:** Maio de 2026
 
 Tasks derivadas das specs. Cada item é implementável de forma independente.
@@ -10,36 +10,36 @@ Tasks derivadas das specs. Cada item é implementável de forma independente.
 
 ## Fase 1 — MVP Funcional
 
-### Sprint 1: Fundação do Projeto
+### Sprint 1: Fundação do Projeto ✅
 
 **Objetivo:** Projeto rodando localmente com banco, testes e CI básico.
 
-- [ ] Setup do projeto FastAPI com estrutura modular (`app/api`, `app/core`, `app/modules`)
-- [ ] Configurar `docker-compose.yml` com PostgreSQL, Redis, MinIO
-- [ ] Configurar Alembic para migrations
-- [ ] Habilitar extensão `pgvector` na primeira migration
-- [ ] Implementar `core/config.py` com settings via Pydantic BaseSettings
-- [ ] Configurar logging estruturado (JSON) via `core/logging.py`
-- [ ] Endpoint `GET /health` funcional
-- [ ] Setup do `pytest` com banco de teste isolado
-- [ ] Script `scripts/setup_minio.py` para criar bucket na primeira execução
+- [x] Setup do projeto FastAPI com estrutura modular (`app/api`, `app/core`, `app/modules`)
+- [x] Configurar `docker-compose.yml` com PostgreSQL, Redis, MinIO
+- [x] Configurar Alembic para migrations
+- [x] Habilitar extensão `pgvector` na primeira migration
+- [x] Implementar `core/config.py` com settings via Pydantic BaseSettings
+- [x] Configurar logging estruturado (JSON) via `core/logging.py`
+- [x] Endpoint `GET /health` funcional
+- [x] Setup do `pytest` com banco de teste isolado
+- [x] Script `scripts/setup_minio.py` para criar bucket na primeira execução
 
 ---
 
-### Sprint 2: Auth
+### Sprint 2: Auth ✅
 
 **Referência:** [specs/01_spec_auth.md](specs/01_spec_auth.md)
 
-- [ ] Modelo `User` e migration
-- [ ] Modelo `RefreshToken` e migration
-- [ ] `POST /auth/register` — criação de usuário com bcrypt
-- [ ] `POST /auth/login` — retorna JWT + refresh token
-- [ ] `POST /auth/refresh` — rotaciona refresh token
-- [ ] `POST /auth/logout` — revoga refresh token
-- [ ] `GET /auth/me` — retorna usuário autenticado
-- [ ] Dependência FastAPI `get_current_user`
-- [ ] Lockout por 5 tentativas falhas (Redis counter com TTL)
-- [ ] Testes de integração de auth (mínimo 6 casos)
+- [x] Modelo `User` e migration
+- [x] Modelo `RefreshToken` e migration
+- [x] `POST /auth/register` — criação de usuário com bcrypt
+- [x] `POST /auth/login` — retorna JWT + refresh token
+- [x] `POST /auth/refresh` — rotaciona refresh token
+- [x] `POST /auth/logout` — revoga refresh token
+- [x] `GET /auth/me` — retorna usuário autenticado
+- [x] Dependência FastAPI `get_current_user`
+- [x] Lockout por 5 tentativas falhas (Redis counter com TTL)
+- [x] Testes de integração de auth (21 casos, 100% cobertura)
 
 ---
 

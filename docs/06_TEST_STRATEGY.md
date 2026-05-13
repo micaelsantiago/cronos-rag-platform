@@ -1,7 +1,7 @@
 # 06_TEST_STRATEGY.md: Cronos RAG Platform
 
-**Status:** Em Definição
-**Versão:** 0.1
+**Status:** Em Andamento
+**Versão:** 0.2
 **Última atualização:** Maio de 2026
 
 ---
@@ -62,18 +62,32 @@ def test_lockout_after_5_failed_attempts():
 **Foco:** Endpoints reais com banco PostgreSQL de teste (não mock de banco).
 
 ### Setup:
-- Banco de teste separado: `cronos_test_db`
-- Migrations aplicadas via `alembic upgrade head` antes da suite
-- Cada teste roda em transação revertida ao final (rollback automático)
+- Banco de teste separado: `cronos_test` (derivado do `DATABASE_URL` em `conftest.py`)
+- Schema criado/destruído por fixture function-scoped com `NullPool` (evita cross-loop no asyncpg)
+- Redis de teste: DB 3 (`redis://localhost:6379/3`), flush por fixture
 - MinIO mockado via `moto` ou instância dedicada de teste
 
 ### O que testar por módulo:
 
-**Auth:**
-- [ ] `POST /auth/register` cria usuário no banco
-- [ ] `POST /auth/login` retorna tokens válidos
-- [ ] `POST /auth/login` com senha errada retorna `401`
-- [ ] `POST /auth/refresh` com token expirado retorna `401`
+**Auth:** ✅ 21 testes — 100% cobertura
+- [x] `POST /auth/register` cria usuário no banco
+- [x] `POST /auth/register` e-mail duplicado retorna `400`
+- [x] `POST /auth/register` senha curta / nome vazio retorna `422`
+- [x] `POST /auth/login` seta cookies httpOnly
+- [x] `POST /auth/login` com senha errada retorna `401`
+- [x] `POST /auth/login` e-mail desconhecido retorna `401` (sem revelar existência)
+- [x] `POST /auth/login` usuário inativo retorna `403`
+- [x] `POST /auth/login` lockout após 5 tentativas retorna `423`
+- [x] `POST /auth/refresh` rotaciona tokens (happy path)
+- [x] `POST /auth/refresh` sem cookie retorna `401`
+- [x] `POST /auth/refresh` token inválido retorna `401`
+- [x] `POST /auth/refresh` token revogado retorna `401`
+- [x] `POST /auth/refresh` token expirado retorna `401`
+- [x] `POST /auth/refresh` usuário desativado após emissão retorna `401`
+- [x] `POST /auth/logout` limpa cookies e invalida `/me`
+- [x] `POST /auth/logout` sem cookie retorna `204`
+- [x] `GET /auth/me` sem auth retorna `401`
+- [x] `GET /auth/me` retorna usuário autenticado
 
 **Workspaces:**
 - [ ] `POST /workspaces` cria workspace e define criador como admin
@@ -119,15 +133,18 @@ def test_lockout_after_5_failed_attempts():
 
 ## 6. Cobertura Mínima
 
-| Camada | Cobertura mínima |
-|---|---|
-| `modules/auth/` | 90% |
-| `modules/documents/` | 85% |
-| `modules/ingestion/` | 80% |
-| `modules/chat/` | 80% |
-| `modules/retrieval/` | 85% |
-| `core/` | 75% |
-| **Total** | **80%** |
+| Camada | Cobertura mínima | Atual |
+|---|---|---|
+| `modules/auth/` | 90% | **100%** ✅ |
+| `modules/workspaces/` | 90% | — |
+| `modules/documents/` | 85% | — |
+| `modules/ingestion/` | 80% | — |
+| `modules/chat/` | 80% | — |
+| `modules/retrieval/` | 85% | — |
+| `core/` | 75% | — |
+| **Total** | **80%** | — |
+
+> Medição requer `coverage.py` com `core = "sysmon"` (Python 3.12 monitoring API) — configurado em `pyproject.toml`. Sem isso, corpos de coroutines async aparecem como não cobertos mesmo sendo executados.
 
 ---
 
@@ -135,21 +152,20 @@ def test_lockout_after_5_failed_attempts():
 
 ```
 tests/
-├── conftest.py              # Fixtures globais (banco, auth headers, factories)
-├── unit/
-│   ├── test_auth.py
-│   ├── test_chunking.py
-│   ├── test_embeddings.py
-│   └── test_retrieval.py
-├── integration/
-│   ├── test_api_auth.py
-│   ├── test_api_workspaces.py
-│   ├── test_api_documents.py
-│   └── test_api_chat.py
-└── e2e/
-    ├── test_ingestion_flow.py
-    └── test_chat_rag_flow.py
+├── conftest.py                      # Fixtures globais: db_session, redis_client, client (ASGI)
+├── test_health.py
+└── modules/
+    ├── auth/
+    │   └── test_auth.py             # ✅ 21 testes — 100% cobertura
+    ├── workspaces/
+    │   └── test_workspaces.py
+    ├── documents/
+    │   └── test_documents.py
+    └── chat/
+        └── test_chat.py
 ```
+
+> Testes de integração e de lógica de negócio convivem no mesmo arquivo por módulo. Testes unitários puros (sem I/O) serão adicionados em `tests/unit/` conforme necessário.
 
 ---
 

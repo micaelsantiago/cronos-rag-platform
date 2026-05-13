@@ -19,8 +19,8 @@ if config.config_file_name is not None:
 
 from app.core.database import Base  # noqa: E402
 
-# As new modules are added, import their models here so autogenerate sees them:
-# from app.modules.auth.models import *      # noqa: F401, E402
+# Models imported so autogenerate picks up schema changes
+from app.modules.auth.models import RefreshToken, User  # noqa: F401, E402
 # from app.modules.workspaces.models import *  # noqa: F401, E402
 # from app.modules.documents.models import *   # noqa: F401, E402
 

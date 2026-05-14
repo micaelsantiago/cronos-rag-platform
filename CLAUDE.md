@@ -161,3 +161,11 @@ Backlog detalhado em [docs/07_BACKLOG.md](docs/07_BACKLOG.md).
 - Testes de integração: banco PostgreSQL real (não mock de banco)
 - APIs externas (OpenAI, Anthropic): sempre mockadas em testes
 - Erros HTTP: usar códigos padronizados definidos em [docs/04_API_SPEC.md](docs/04_API_SPEC.md)
+
+---
+
+## Regras detalhadas (carregadas automaticamente)
+
+@.claude/rules/invariants.md
+@.claude/rules/testing.md
+@.claude/rules/commits.md
